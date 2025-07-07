@@ -6,4 +6,3 @@ langchain-google-genai
 google-generativeai
 openai
 python-dotenv
-os
