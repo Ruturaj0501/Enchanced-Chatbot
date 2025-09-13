@@ -11,7 +11,6 @@ from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
-
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain_core.documents import Document
 from langchain_core.messages import HumanMessage
@@ -176,3 +175,4 @@ if user_question := st.chat_input("Ask your question here..."):
     
     if full_response:
         history.add_ai_message(full_response)
+
