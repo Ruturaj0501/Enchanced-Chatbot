@@ -5,8 +5,9 @@ streamlit
 langchain
 langchain-core
 langchain-community
-langchain-groq
-langchain-google-genai
+langchain_groq
+langchain_google_genai
+langchain-google
 langchain-chroma
 google-generativeai
 
@@ -17,3 +18,4 @@ sentence-transformers
 # Utilities
 python-dotenv
 pypdf
+
