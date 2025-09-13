@@ -1,8 +1,13 @@
 streamlit
 langchain
-langchain-openai
+langchain-core
+langchain-community
 langchain-groq
 langchain-google-genai
+langchain-chroma
 google-generativeai
-openai
 python-dotenv
+sentence-transformers
+pypdf
+chromadb
+os
