@@ -34,7 +34,7 @@ genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
 groq_api_key = os.getenv('GROQ_API_KEY')
 
 
-embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2",model_kwargs={'device': 'cpu'})
 
 # ------------------- LLM INSTANCE GENERATOR -------------------
 def get_llm_instance(llm_name, temp):
@@ -178,5 +178,6 @@ if user_question := st.chat_input("Ask your question here..."):
     
     if full_response:
         history.add_ai_message(full_response)
+
 
 
