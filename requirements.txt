@@ -1,3 +1,7 @@
+# Streamlit Framework
+streamlit
+
+# Core LangChain & AI Libs
 langchain
 langchain-core
 langchain-community
@@ -5,10 +9,11 @@ langchain-groq
 langchain-google-genai
 langchain-chroma
 google-generativeai
-python-dotenv
-sentence-transformers
-pypdf
-chromadb
-os
-bs4
 
+# Vector Database & Embeddings
+chromadb
+sentence-transformers
+
+# Utilities
+python-dotenv
+pypdf
