@@ -58,9 +58,9 @@ mode = st.sidebar.radio("Choose Mode", ("Normal", "PDF", "Image"))
 
 if mode == "Image":
     st.sidebar.info("Image analysis requires a Gemini (multimodal) model.")
-    model_choices = ["gemini-1.5-flash", "gemini-1.5-pro"]
+    model_choices = ["gemini-2.5-flash", "gemini-2.5-pro"]
 else:
-    model_choices = ["gemini-1.5-flash","gemini-1.5-pro","deepseek-r1-distill-llama-70b","llama-3.1-8b-instant","llama-3.1-70b-versatile","gemma2-9b-it","openai/gpt-oss-20b","openai/gpt-oss-120b"]
+    model_choices = ["gemini-2.5-flash","gemini-2.5-pro","deepseek-r1-distill-llama-70b","llama-3.1-8b-instant","llama-3.1-70b-versatile","gemma2-9b-it","openai/gpt-oss-20b","openai/gpt-oss-120b"]
 
 llm_selection = st.sidebar.selectbox("Select Model", model_choices)
 temperature = st.sidebar.slider("Temperature", min_value=0.00, max_value=1.00, value=0.70)
@@ -178,6 +178,7 @@ if user_question := st.chat_input("Ask your question here..."):
     
     if full_response:
         history.add_ai_message(full_response)
+
 
 
 
