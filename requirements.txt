@@ -10,6 +10,7 @@ langchain_google_genai
 langchain-google
 langchain-chroma
 google-generativeai
+pysqlite3-binary
 
 # Vector Database & Embeddings
 chromadb
@@ -18,4 +19,5 @@ sentence-transformers
 # Utilities
 python-dotenv
 pypdf
+
 
