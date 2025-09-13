@@ -10,4 +10,5 @@ sentence-transformers
 pypdf
 chromadb
 os
+bs4
 
