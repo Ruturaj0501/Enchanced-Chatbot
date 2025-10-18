@@ -40,7 +40,7 @@ embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2",model_kwargs={'
 def get_llm_instance(llm_name, temp):
     """Returns an instance of the selected LLM."""
     if "gemini" in llm_name:
-        return ChatGoogleGenerativeAI(model=llm_name, temperature=temp, convert_system_message_to_human=True)
+        return ChatGoogleGenerativeAI(model=llm_name, temperature=temp)
     elif "openai/gpt-oss" in llm_name:
         return ChatGroq(model_name=llm_name, groq_api_key=groq_api_key, temperature=temp)
     elif "llama" in llm_name or "gemma" in llm_name or "deepseek" in llm_name:
@@ -178,3 +178,4 @@ if user_question := st.chat_input("Ask your question here..."):
     
     if full_response:
         history.add_ai_message(full_response)
+
