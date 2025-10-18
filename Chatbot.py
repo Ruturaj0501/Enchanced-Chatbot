@@ -51,6 +51,17 @@ def get_llm_instance(llm_name, temp):
         st.error("Selected model is not supported yet.")
         return None
 
+
+import asyncio
+
+try:
+    # Attempt to get the running event loop
+    loop = asyncio.get_running_loop()
+except RuntimeError:
+    # If no event loop is running, create a new one and set it for the current thread
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
 # ------------------- STREAMLIT UI -------------------
 st.set_page_config(page_title="🧠 Enchance Chatbot")
 st.title("🧠 Enchance Chatbot")
@@ -200,3 +211,4 @@ if user_question := st.chat_input("Ask your question here..."):
 
     if full_response:
         history.add_ai_message(full_response)
+
