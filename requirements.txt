@@ -5,7 +5,7 @@ streamlit
 # Pinning to a known stable set of versions to resolve pydantic conflict
 langchain
 langchain-core==0.1.52
-pydantic<2
+pydantic
 langchain-community
 langchain_groq
 langchain-google-genai
@@ -23,3 +23,4 @@ torchvision==0.18.1
 # Utilities
 python-dotenv
 pypdf
+
