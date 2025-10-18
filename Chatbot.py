@@ -38,7 +38,6 @@ embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2",model_kwargs={'
 
 # ------------------- LLM INSTANCE GENERATOR -------------------
 def get_llm_instance(llm_name, temp):
-    """Returns an instance of the selected LLM."""
     if "gemini" in llm_name:
         return ChatGoogleGenerativeAI(model=llm_name, temperature=temp)
     elif "openai/gpt-oss" in llm_name:
@@ -178,4 +177,5 @@ if user_question := st.chat_input("Ask your question here..."):
     
     if full_response:
         history.add_ai_message(full_response)
+
 
