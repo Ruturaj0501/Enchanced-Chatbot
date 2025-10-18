@@ -2,12 +2,13 @@
 streamlit
 
 # Core LangChain & AI Libs
+# Pinning to a known stable set of versions to resolve pydantic conflict
 langchain
-langchain-core
+langchain-core==0.1.52
+pydantic<2
 langchain-community
 langchain_groq
 langchain-google-genai
-langchain-google
 langchain-chroma
 google-generativeai
 pysqlite3-binary
@@ -22,6 +23,3 @@ torchvision==0.18.1
 # Utilities
 python-dotenv
 pypdf
-
-
-
