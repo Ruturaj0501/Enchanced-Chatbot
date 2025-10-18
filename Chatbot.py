@@ -30,7 +30,7 @@ os.environ['HF_TOKEN'] = os.getenv('HF_TOKEN')
 os.environ['LANGCHAIN_API_KEY'] = os.getenv("LANGCHAIN_API_KEY")
 os.environ['LANGCHAIN_TRACING_V2'] = "true"
 os.environ['LANGCHAIN_PROJECT'] = "ALL CHATBOT"
-os.environ["CHROMA_TELEMETRY_ENABLED"] = "false"
+
 
 genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
 groq_api_key = os.getenv('GROQ_API_KEY')
@@ -212,5 +212,6 @@ if user_question := st.chat_input("Ask your question here..."):
 
     if full_response:
         history.add_ai_message(full_response)
+
 
 
