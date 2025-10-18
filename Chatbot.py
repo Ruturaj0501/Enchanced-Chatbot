@@ -1,15 +1,3 @@
-import asyncio
-
-try:
-    
-    loop = asyncio.get_running_loop()
-except RuntimeError:
-    
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-
-
-
 __import__('pysqlite3')
 import sys
 sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
@@ -190,6 +178,7 @@ if user_question := st.chat_input("Ask your question here..."):
     
     if full_response:
         history.add_ai_message(full_response)
+
 
 
 
