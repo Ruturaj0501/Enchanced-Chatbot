@@ -6,7 +6,7 @@ langchain
 langchain-core
 langchain-community
 langchain_groq
-langchain_google_genai
+langchain-google-genai
 langchain-google
 langchain-chroma
 google-generativeai
@@ -22,6 +22,7 @@ torchvision==0.18.1
 # Utilities
 python-dotenv
 pypdf
+
 
 
 
