@@ -111,7 +111,7 @@ if mode == "PDF":
 
                 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
                 splits = text_splitter.split_documents(documents)
-                vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings)
+                vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings,persist_directory="./chroma_db_v3")
                 return vectorstore.as_retriever()
 
             retriever = process_pdfs(uploaded_files)
@@ -212,6 +212,7 @@ if user_question := st.chat_input("Ask your question here..."):
 
     if full_response:
         history.add_ai_message(full_response)
+
 
 
 
