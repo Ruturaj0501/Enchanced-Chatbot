@@ -12,6 +12,8 @@ langchain-google-genai
 langchain-chroma
 google-generativeai
 pysqlite3-binary
+langchain-pinecone
+pinecone-client
 
 # Vector Database & Embeddings
 chromadb
