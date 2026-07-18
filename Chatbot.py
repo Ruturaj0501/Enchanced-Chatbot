@@ -90,18 +90,27 @@ retriever = None
 if mode == "PDF":
     uploaded_files = st.file_uploader("Upload PDFs", type="pdf", accept_multiple_files=True)
     if uploaded_files:
-        with st.spinner("Processing PDFs..."):
+        with st.spinner("Processing PDFs and syncing with Pinecone..."):
 
             @st.cache_resource(show_spinner=False)
-            def process_pdfs(_uploaded_files):
+            def process_pdfs(uploaded_files):
                 documents = []
-                for file in _uploaded_files:
+                for file in uploaded_files:
                     temp_path = f"./{file.name}"
                     with open(temp_path, "wb") as f:
                         f.write(file.getvalue())
                     loader = PyPDFLoader(temp_path)
-                    documents.extend(loader.load())
+                    loaded_docs = loader.load()
+                    
+                    total_text = "".join([doc.page_content for doc in loaded_docs])
+                    if not total_text.strip():
+                        st.warning(f"⚠️ '{file.name}' seems to be an image or scanned PDF. No text could be extracted!")
+                    
+                    documents.extend(loaded_docs)
                     os.remove(temp_path)
+
+                if not documents:
+                    return None
 
                 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
                 splits = text_splitter.split_documents(documents)
@@ -120,15 +129,20 @@ if mode == "PDF":
                     while not pc.describe_index(index_name).status["ready"]:
                         time.sleep(1)
                 
-                vectorstore = PineconeVectorStore.from_documents(
+                PineconeVectorStore.from_documents(
                     documents=splits, 
                     embedding=embeddings, 
                     index_name=index_name
                 )
-                return vectorstore.as_retriever()
+                
+                time.sleep(3)
+                
+                vectorstore = PineconeVectorStore(index_name=index_name, embedding=embeddings)
+                return vectorstore.as_retriever(search_kwargs={"k": 10})
 
             retriever = process_pdfs(uploaded_files)
-            st.success("PDFs processed and ready!")
+            if retriever:
+                st.success("PDFs processed and ready for querying!")
 
 elif mode == "Image":
     uploaded_image = st.file_uploader("Upload an Image", type=["jpg", "jpeg", "png"])
