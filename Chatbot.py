@@ -10,7 +10,9 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain_chroma import Chroma
+from langchain_pinecone import PineconeVectorStore
+from pinecone import Pinecone, ServerlessSpec
+import time
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -22,15 +24,15 @@ import os
 from dotenv import load_dotenv
 import io
 import base64
+import asyncio
 
 load_dotenv()
 
-# ------------------- ENV CONFIG -------------------
 os.environ['HF_TOKEN'] = os.getenv('HF_TOKEN')
 os.environ['LANGCHAIN_API_KEY'] = os.getenv("LANGCHAIN_API_KEY")
 os.environ['LANGCHAIN_TRACING_V2'] = "true"
 os.environ['LANGCHAIN_PROJECT'] = "ALL CHATBOT"
-
+os.environ['PINECONE_API_KEY'] = os.getenv('PINECONE_API_KEY')
 
 genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
 groq_api_key = os.getenv('GROQ_API_KEY')
@@ -40,7 +42,6 @@ embeddings = HuggingFaceEmbeddings(
     model_kwargs={'device': 'cpu'}
 )
 
-# ------------------- LLM INSTANCE GENERATOR -------------------
 def get_llm_instance(llm_name, temp):
     if "gemini" in llm_name:
         return ChatGoogleGenerativeAI(model=llm_name, temperature=temp)
@@ -52,18 +53,12 @@ def get_llm_instance(llm_name, temp):
         st.error("Selected model is not supported yet.")
         return None
 
-
-import asyncio
-
 try:
-    # Attempt to get the running event loop
     loop = asyncio.get_running_loop()
 except RuntimeError:
-    # If no event loop is running, create a new one and set it for the current thread
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
-# ------------------- STREAMLIT UI -------------------
 st.set_page_config(page_title="🧠 Enchance Chatbot")
 st.title("🧠 Enchance Chatbot")
 st.sidebar.title("Settings")
@@ -92,7 +87,6 @@ session_id = st.text_input("Session ID", value="default_session")
 
 retriever = None
 
-# ------------------- FILE HANDLING & MODE SPECIFIC UI -------------------
 if mode == "PDF":
     uploaded_files = st.file_uploader("Upload PDFs", type="pdf", accept_multiple_files=True)
     if uploaded_files:
@@ -111,7 +105,26 @@ if mode == "PDF":
 
                 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
                 splits = text_splitter.split_documents(documents)
-                vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings,persist_directory="./chroma_db_v3")
+                
+                index_name = "enhanced-chatbot"
+                pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
+                
+                existing_indexes = [index_info["name"] for index_info in pc.list_indexes()]
+                if index_name not in existing_indexes:
+                    pc.create_index(
+                        name=index_name,
+                        dimension=384,
+                        metric="cosine",
+                        spec=ServerlessSpec(cloud="aws", region="us-east-1")
+                    )
+                    while not pc.describe_index(index_name).status["ready"]:
+                        time.sleep(1)
+                
+                vectorstore = PineconeVectorStore.from_documents(
+                    documents=splits, 
+                    embedding=embeddings, 
+                    index_name=index_name
+                )
                 return vectorstore.as_retriever()
 
             retriever = process_pdfs(uploaded_files)
@@ -123,7 +136,6 @@ elif mode == "Image":
         st.image(uploaded_image, caption="Uploaded Image.", use_container_width=True)
         st.session_state.image_bytes = uploaded_image.getvalue()
 
-# ------------------- CHAT HISTORY MANAGEMENT -------------------
 if "store" not in st.session_state:
     st.session_state.store = {}
 
@@ -138,9 +150,7 @@ for message in history.messages:
     with st.chat_message(message.type):
         st.markdown(message.content)
 
-# ------------------- CHAT INPUT AND RESPONSE LOGIC -------------------
 if user_question := st.chat_input("Ask your question here..."):
-    # Display user message and add to history
     with st.chat_message("human"):
         st.markdown(user_question)
     history.add_user_message(user_question)
@@ -149,7 +159,6 @@ if user_question := st.chat_input("Ask your question here..."):
     if llm_instance is None:
         st.stop()
 
-    # Assistant's response logic
     with st.chat_message("ai"):
         response_placeholder = st.empty()
         full_response = ""
@@ -212,8 +221,3 @@ if user_question := st.chat_input("Ask your question here..."):
 
     if full_response:
         history.add_ai_message(full_response)
-
-
-
-
-
